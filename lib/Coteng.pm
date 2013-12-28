@@ -39,7 +39,7 @@ sub new {
 sub db {
     my ($self, $dbname) = @_;
     $dbname || Carp::croak "dbname required";
-    $self->{current_dbh} ||= $self->dbh($dbname);
+    $self->current_dbh($self->dbh($dbname));
     $self;
 }
 
@@ -292,6 +292,8 @@ Coteng is a lightweight L<Teng>, just as very simple DBI Wrapper.
 Teng is a simple and good designed ORMapper, but it has a little complicated functions such as the original model class and the schema definition class (L<Teng::Row> and L<Teng::Schema>).
 Coteng doesn't have such functions and only has very similar Teng SQL interface.
 
+DBIx::Sunny
+
 =head1 METHODS
 
 =over 4
@@ -301,6 +303,8 @@ Coteng doesn't have such functions and only has very similar Teng SQL interface.
 =head SEE ALSO
 
 =over
+
+=item L<DBIx::Sunny>
 
 =item L<Teng>
 
