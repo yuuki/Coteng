@@ -24,9 +24,9 @@ sub dbh {
 
     $self->{_dbh}{$dbname} ||= do {
         my $db_info = $self->{connect_info}->{$dbname};
-        my $dsn     = $db_info->{dsn};
-        my $user    = $db_info->{user};
-        my $passwd  = $db_info->{passwd};
+        my $dsn     = $db_info->{dsn} || Carp::croak "dsn required";
+        my $user    = defined $db_info->{user}   ? $db_info->{user} : '';
+        my $passwd  = defined $db_info->{passwd} ? $db_info->{passwd} : '';
 
         my $dbh = Coteng::DBI->connect($dsn, $user, $passwd, {
             RootClass => $self->{root_dbi_class},

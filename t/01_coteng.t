@@ -11,12 +11,12 @@ subtest new => sub {
     my $db = Coteng->new({
         connect_info => {
             db_master => {
-                dsn     => 'dbi:SQLite:dbname=server',
+                dsn     => 'dbi:SQLite::memory:',
                 user    => 'nobody',
                 passwd  => 'nobody',
             },
             db_slave => {
-                dsn     => 'dbi:SQLite:dbname=server',
+                dsn     => 'dbi:SQLite::memory:',
                 user    => 'nobody',
                 passwd  => 'nobody',
             },
@@ -28,12 +28,12 @@ subtest new => sub {
     if (ok $db) {
         isa_ok $db, "Coteng";
         is_deeply $db->{connect_info}{db_master}, {
-            dsn     => 'dbi:SQLite:dbname=server',
+            dsn     => 'dbi:SQLite::memory:',
             user    => 'nobody',
             passwd  => 'nobody',
         };
         is_deeply $db->{connect_info}{db_slave}, {
-            dsn     => 'dbi:SQLite:dbname=server',
+            dsn     => 'dbi:SQLite::memory:',
             user    => 'nobody',
             passwd  => 'nobody',
         };
@@ -46,14 +46,10 @@ subtest dbh => sub {
     my $db = Coteng->new({
         connect_info => {
             db_master => {
-                dsn     => 'dbi:SQLite:dbname=master',
-                user    => 'nobody',
-                passwd  => 'nobody',
+                dsn => 'dbi:SQLite::memory:',
             },
             db_slave => {
-                dsn     => 'dbi:SQLite:dbname=slave',
-                user    => 'nobody',
-                passwd  => 'nobody',
+                dsn => 'dbi:SQLite::memory:',
             },
         },
         driver_name => 'SQLite',
