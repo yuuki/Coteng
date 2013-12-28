@@ -14,15 +14,108 @@ __END__
 
 =head1 NAME
 
-Coteng - It's new $module
+Coteng - Lightweight Teng
 
 =head1 SYNOPSIS
 
     use Coteng;
 
+    my $db = Coteng->new({
+        connect_info => {
+            db_master => {
+                dsn     => 'dbi:mysql:dbname=server;host=dbmasterhost',
+                user    => 'nobody',
+                passwd  => 'nobody',
+            },
+            db_slave => {
+                dsn     => 'dbi:mysql:dbname=server;host=dbslavehost',
+                user    => 'nobody',
+                passwd  => 'nobody',
+            },
+        },
+        driver_name => 'mysql',
+        root_dbi_class => "Scope::Container::DBI",
+    });
+
+    my $inserted_host = $db->dbh('db_master')->insert(host => {
+        name    => 'host001',
+        ipv4    => '10.0.0.1',
+        status  => 'standby',
+    }, "Server::Model::Host");
+    my $last_insert_id = $db->dbh('db_master')->fast_insert(host => {
+        name    => 'host001',
+        ipv4    => '10.0.0.1',
+        status  => 'standby',
+    });
+    my $host = $db->dbh('db_slave')->single(host => {
+        name => 'host001',
+    }, "Server::Model::Host");
+    my $hosts = $db->dbh('db_slave')->search(host => {
+        name => 'host001',
+    }, "Server::Model::Host");
+
+    my $updated_row_count = $db->dbh('db_master')->update(host => {
+        status => "working",
+    }, {
+        id => 10,
+    });
+    my $deleted_row_count = $db->dbh('db_master')->delete(host => {
+        id => 10,
+    });
+
+    ## no blessed return value
+
+    my $hosts = $db->dbh('db_slave')->single(host => {
+        name => 'host001',
+    });
+
+    # Raw SQL interface
+
+    my $host = $db->dbh('db_slave')->single_named(q[
+        SELECT * FROM host where name = :name LIMIT 1
+    ], { name => "host001" }, "Server::Model::Host");
+    my $host = $db->dbh('db_slave')->single_by_sql(q[
+        SELECT * FROM host where name = ? LIMIT 1
+    ], [ "host001" ], "Server::Model::Host");
+
+    my $hosts = $db->dbh('db_slave')->search_named(q[
+        SELECT * FROM host where status = :status
+    ], { status => "working" }, "Server::Model::Host");
+    my $hosts = $db->dbh('db_slave')->search_named(q[
+        SELECT * FROM host where status = ?
+    ], [ "working" ], "Server::Model::Host");
+
+
+    use DBIx::Rainy::DBI;
+
+    my $dbh = DBIx::Rainy::DBI->connect('dbi:mysql:dbname=db_master;host=dbmasterhost', 'nobody', 'nobody', {
+        RootClass => "Scope::Container::DBI",
+    });
+    my $host = $dbh->single(host => {
+        name => 'host002',
+    }, "Server::Model::Host");
+
 =head1 DESCRIPTION
 
-Coteng is ...
+Coteng is a lightweight L<Teng>, just as very simple DBI Wrapper.
+Teng is a simple and good designed ORMapper, but it has a little complicated functions such as the original model class and the schema definition class (L<Teng::Row> and L<Teng::Schema>).
+Coteng doesn't have such functions and only has very similar Teng SQL interface.
+
+=head1 METHODS
+
+=over 4
+
+=back
+
+=head SEE ALSO
+
+=over
+
+=item L<Teng>
+
+=item L<SQL::Maker>
+
+=back
 
 =head1 LICENSE
 
