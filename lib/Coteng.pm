@@ -7,10 +7,8 @@ our $VERSION = "0.01";
 
 use Carp ();
 
-use DBIx::Sunny;
 use Module::Load qw(load);
 use SQL::Maker;
-
 use Class::Accessor::Lite::Lazy (
     rw => [qw(
         current_dbh
@@ -19,6 +17,8 @@ use Class::Accessor::Lite::Lazy (
         sql_builder
     )],
 );
+
+use Coteng::DBI;
 
 sub _build_sql_builder {
     my ($self) = @_;
@@ -51,7 +51,7 @@ sub dbh {
         my $user    = defined $db_info->{user}   ? $db_info->{user} : '';
         my $passwd  = defined $db_info->{passwd} ? $db_info->{passwd} : '';
 
-        my $dbh = DBIx::Sunny->connect($dsn, $user, $passwd, {
+        my $dbh = Coteng::DBI->connect($dsn, $user, $passwd, {
             RootClass => $self->{root_dbi_class},
         });
         $dbh;
