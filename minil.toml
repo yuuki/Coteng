@@ -1,2 +1,6 @@
 name = "Coteng"
-# badges = ["travis"]
+authority = "cpan:YUUKI"
+badges = ["travis"]
+
+[tap_harness_args]
+jobs=3

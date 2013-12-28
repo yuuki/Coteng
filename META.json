@@ -1,5 +1,5 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "Lightweight Teng",
    "author" : [
       "y_uuki <yuki.tsubo@gmail.com>"
    ],
@@ -43,15 +43,35 @@
       },
       "runtime" : {
          "requires" : {
+            "Class::Accessor::Lite::Lazy" : "0",
+            "DBI" : "1.630",
+            "DBIx::Sunny" : "0.21",
+            "Module::Load" : "0",
+            "SQL::Maker" : "1.12",
+            "SQL::NamedPlaceholder" : "0.03",
+            "parent" : "0",
             "perl" : "5.008005"
          }
       },
       "test" : {
          "requires" : {
+            "DBD::SQLite" : "0",
+            "Exporter::Lite" : "0",
             "Test::More" : "0.98"
          }
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/y-uuki/Coteng/issues"
+      },
+      "homepage" : "https://github.com/y-uuki/Coteng",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/y-uuki/Coteng.git",
+         "web" : "https://github.com/y-uuki/Coteng"
+      }
+   },
    "version" : "0.01"
 }
