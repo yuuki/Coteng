@@ -5,6 +5,7 @@ Coteng - Lightweight Teng
 
 # SYNOPSIS
 
+```perl
     use Coteng;
 
     my $coteng = Coteng->new({
@@ -84,7 +85,7 @@ Coteng - Lightweight Teng
         )],
         new => 1,
     );
-
+```
 
 
 # DESCRIPTION
@@ -265,6 +266,8 @@ Coteng provides a number of methods to all your classes,
 - `$sth = $coteng->execute($sql, [\@bind_values|@bind_values])`
 
     execute query and get statement handler.
+
+# SEE ALSO
 
 - [Teng](http://search.cpan.org/perldoc?Teng)
 - [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny)

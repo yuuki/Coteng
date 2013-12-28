@@ -505,7 +505,7 @@ execute query and get statement handler.
 
 =back
 
-=head SEE ALSO
+=head1 SEE ALSO
 
 =over
 
