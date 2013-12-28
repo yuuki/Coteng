@@ -5,6 +5,38 @@ use warnings;
 
 our $VERSION = "0.01";
 
+use Carp ();
+
+use Coteng::DBI;
+
+sub new {
+    my ($class, $args) = @_;
+    my $self = bless {
+        connect_info    => $args->{connect_info}   || undef,
+        root_dbi_class  => $args->{root_dbi_class} || undef,
+        driver_name     => $args->{driver_name}    || undef,
+    }, $class;
+    return $self;
+}
+
+sub dbh {
+    my ($self, $dbname) = @_;
+
+    $self->{_dbh}{$dbname} ||= do {
+        my $db_info = $self->{connect_info}->{$dbname};
+        my $dsn     = $db_info->{dsn};
+        my $user    = $db_info->{user};
+        my $passwd  = $db_info->{passwd};
+
+        my $dbh = Coteng::DBI->connect($dsn, $user, $passwd, {
+            RootClass => $self->{root_dbi_class},
+        });
+        if ($self->{driver_name}) {
+            $dbh->driver_name($self->{driver_name});
+        }
+        $dbh;
+    };
+}
 
 
 1;
