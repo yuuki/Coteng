@@ -9,7 +9,7 @@ subtest use => sub {
 };
 
 subtest new => sub {
-    my $db = Coteng->new({
+    my $coteng = Coteng->new({
         connect_info => {
             db_master => {
                 dsn     => 'dbi:SQLite::memory:',
@@ -26,25 +26,25 @@ subtest new => sub {
         root_dbi_class => "Scope::Container::DBI",
     });
 
-    if (ok $db) {
-        isa_ok $db, "Coteng";
-        is_deeply $db->{connect_info}{db_master}, {
+    if (ok $coteng) {
+        isa_ok $coteng, "Coteng";
+        is_deeply $coteng->{connect_info}{db_master}, {
             dsn     => 'dbi:SQLite::memory:',
             user    => 'nobody',
             passwd  => 'nobody',
         };
-        is_deeply $db->{connect_info}{db_slave}, {
+        is_deeply $coteng->{connect_info}{db_slave}, {
             dsn     => 'dbi:SQLite::memory:',
             user    => 'nobody',
             passwd  => 'nobody',
         };
-        is $db->{driver_name}, 'SQLite';
-        is $db->{root_dbi_class}, "Scope::Container::DBI";
+        is $coteng->{driver_name}, 'SQLite';
+        is $coteng->{root_dbi_class}, "Scope::Container::DBI";
     }
 };
 
-subtest dbh => sub {
-    my $db = Coteng->new({
+subtest db => sub {
+    my $coteng = Coteng->new({
         connect_info => {
             db_master => {
                 dsn => 'dbi:SQLite::memory:',
@@ -55,8 +55,28 @@ subtest dbh => sub {
         },
         driver_name => 'SQLite',
     });
-    isa_ok $db->dbh('db_master'), 'DBIx::Sunny::db';
-    isa_ok $db->dbh('db_slave'),  'DBIx::Sunny::db';
+
+    isa_ok $coteng->db('db_master'), 'Coteng';
+    is $coteng->current_dbh, $coteng->{_dbh}{db_master};
+
+    isa_ok $coteng->db('db_slave'),  'Coteng';
+    is $coteng->current_dbh, $coteng->{_dbh}{db_slave};
+};
+
+subtest dbh => sub {
+    my $coteng = Coteng->new({
+        connect_info => {
+            db_master => {
+                dsn => 'dbi:SQLite::memory:',
+            },
+            db_slave => {
+                dsn => 'dbi:SQLite::memory:',
+            },
+        },
+        driver_name => 'SQLite',
+    });
+    isa_ok $coteng->dbh('db_master'), 'DBIx::Sunny::db';
+    isa_ok $coteng->dbh('db_slave'),  'DBIx::Sunny::db';
 };
 
 
