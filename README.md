@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/y-uuki/Coteng.png?branch=master)](https://travis-ci.org/y-uuki/Coteng)
+[![Build Status](https://travis-ci.org/y-uuki/Coteng.png?branch=master)](https://travis-ci.org/y-uuki/Coteng) [![Coverage Status](https://coveralls.io/repos/y-uuki/Coteng/badge.png?branch=master)](https://coveralls.io/r/y-uuki/Coteng?branch=master)
 # NAME
 
 Coteng - Lightweight Teng

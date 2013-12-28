@@ -73,5 +73,6 @@
          "web" : "https://github.com/y-uuki/Coteng"
       }
    },
-   "version" : "0.01"
+   "version" : "0.01",
+   "x_authority" : "cpan:YUUKI"
 }
