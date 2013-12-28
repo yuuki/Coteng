@@ -28,6 +28,22 @@ DISTRIBUTIONS
       Class::Accessor::Lite 0.05
     requirements:
       ExtUtils::MakeMaker 6.42
+  Class-Accessor-Lite-Lazy-0.03
+    pathname: M/MO/MOTEMEN/Class-Accessor-Lite-Lazy-0.03.tar.gz
+    provides:
+      Class::Accessor::Lite::Lazy 0.03
+    requirements:
+      CPAN::Meta 0
+      CPAN::Meta::Prereqs 0
+      Carp 0
+      Class::Accessor::Lite 0.05
+      ExtUtils::CBuilder 0
+      ExtUtils::MakeMaker 6.59
+      Module::Build 0.38
+      Test::Fatal 0
+      Test::More 0.98
+      parent 0
+      perl 5.008001
   Class-Data-Inheritable-0.08
     pathname: T/TM/TMTM/Class-Data-Inheritable-0.08.tar.gz
     provides:

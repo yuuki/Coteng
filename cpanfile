@@ -1,5 +1,6 @@
 requires 'perl', '5.008001';
 
+requires 'Class::Accessor::Lite::Lazy';
 requires 'DBIx::Sunny', '0.21';
 requires 'SQL::NamedPlaceholder', '0.03';
 requires 'SQL::Maker', '1.12';
