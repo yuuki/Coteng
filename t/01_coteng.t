@@ -22,7 +22,6 @@ subtest new => sub {
                 passwd  => 'nobody',
             },
         },
-        driver_name => 'SQLite',
         root_dbi_class => "Scope::Container::DBI",
     });
 
@@ -38,7 +37,6 @@ subtest new => sub {
             user    => 'nobody',
             passwd  => 'nobody',
         };
-        is $coteng->{driver_name}, 'SQLite';
         is $coteng->{root_dbi_class}, "Scope::Container::DBI";
     }
 };
@@ -53,7 +51,6 @@ subtest db => sub {
                 dsn => 'dbi:SQLite::memory:',
             },
         },
-        driver_name => 'SQLite',
     });
 
     isa_ok $coteng->db('db_master'), 'Coteng';
@@ -73,7 +70,6 @@ subtest dbh => sub {
                 dsn => 'dbi:SQLite::memory:',
             },
         },
-        driver_name => 'SQLite',
     });
     isa_ok $coteng->dbh('db_master'), 'DBIx::Sunny::db';
     isa_ok $coteng->dbh('db_slave'),  'DBIx::Sunny::db';
@@ -89,7 +85,6 @@ my $coteng = Coteng->new({
             dsn => 'dbi:SQLite::memory:',
         },
     },
-    driver_name => 'SQLite',
 });
 $coteng->{current_dbh} = $dbh;
 

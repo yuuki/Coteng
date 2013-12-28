@@ -22,7 +22,7 @@ use Class::Accessor::Lite::Lazy (
 
 sub _build_sql_builder {
     my ($self) = @_;
-    return SQL::Maker->new(driver => $self->{driver_name});
+    return SQL::Maker->new(driver => $self->current_dbh->{Driver}{Name});
 }
 
 sub new {
@@ -30,7 +30,6 @@ sub new {
     my $self = bless {
         connect_info    => $args->{connect_info}   || undef,
         root_dbi_class  => $args->{root_dbi_class} || undef,
-        driver_name     => $args->{driver_name}    || undef,
         current_dbh     => undef,
     }, $class;
     return $self;
@@ -188,7 +187,7 @@ sub bulk_insert {
     return undef unless scalar(@{$args || []});
 
     my $dbh = $self->current_dbh;
-    my $can_multi_insert = $dbh->{Driver}->{Name} eq 'mysql' ? 1 : 0;
+    my $can_multi_insert = $dbh->{Driver}{Name} eq 'mysql' ? 1 : 0;
 
     if ($can_multi_insert) {
         my ($sql, @binds) = $self->sql_builder->insert_multi($table, $args);
@@ -254,7 +253,6 @@ Coteng - Lightweight Teng
                 passwd  => 'nobody',
             },
         },
-        driver_name => 'mysql',
         root_dbi_class => "Scope::Container::DBI",
     });
 

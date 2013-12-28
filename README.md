@@ -21,7 +21,6 @@ Coteng - Lightweight Teng
                 passwd  => 'nobody',
             },
         },
-        driver_name => 'mysql',
         root_dbi_class => "Scope::Container::DBI",
     });
 
