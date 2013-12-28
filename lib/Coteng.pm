@@ -8,7 +8,7 @@ our $VERSION = "0.01";
 use Carp ();
 
 use DBIx::Sunny;
-use Module::Load qw(load_class);
+use Module::Load qw(load);
 use SQL::Maker;
 
 use Class::Accessor::Lite::Lazy (
@@ -59,17 +59,6 @@ sub dbh {
     };
 }
 
-sub single_named {
-    my ($self, $query, $bind_values, $class) = @_;
-    my ($sql, $binds) = SQL::NamedPlaceholder::bind_named($query, $bind_values);
-    my $row = $self->current_dbh->select_row($sql, @$binds);
-    if ($class) {
-        load $class;
-        $row = $class->new($row);
-    }
-    return $row;
-}
-
 sub single_by_sql {
     my ($self, $sql, $binds, $class) = @_;
 
@@ -78,18 +67,14 @@ sub single_by_sql {
         load $class;
         $row = $class->new($row);
     }
-    return $self->current_dbh->select_row($sql, $binds);
+    return $row;
 }
 
-sub search_named {
+sub single_named {
     my ($self, $sql, $bind_values, $class) = @_;
     ($sql, my $binds) = SQL::NamedPlaceholder::bind_named($sql, $bind_values);
-    my $rows = $self->current_dbh->select_all($sql, @$binds);
-    if ($class) {
-        load $class;
-        $rows = [ map { $class->new($_) } @$rows ];
-    }
-    return $rows;
+    my $row = $self->single_by_sql($sql, $binds, $class);
+    return $row;
 }
 
 sub search_by_sql {
@@ -102,9 +87,16 @@ sub search_by_sql {
     return $rows;
 }
 
-sub exucute {
+sub search_named {
+    my ($self, $sql, $bind_values, $class) = @_;
+    ($sql, my $binds) = SQL::NamedPlaceholder::bind_named($sql, $bind_values);
+    my $rows = $self->search_by_sql($sql, $binds, $class);
+    return $rows;
+}
+
+sub execute {
     my $self = shift;
-    return $self->current_dbh->query($self->_expand_args(@_));
+    my $db = $self->current_dbh->query($self->_expand_args(@_));
 }
 
 sub single {
@@ -113,10 +105,14 @@ sub single {
         my $klass = pop;
         ref($klass) ? undef : $klass;
     };
+    if (ref($opt) ne "HASH") {
+        $opt = {};
+    }
 
     if (ref($where) ne "HASH" && ref($where) ne "ARRAY") {
         Carp::croak "'where' required to be HASH or ARRAY";
     }
+
     $opt->{limit} = 1;
 
     my ($sql, @binds) = $self->sql_builder->select(
@@ -125,8 +121,8 @@ sub single {
         $where,
         $opt
     );
-    my $rows = $self->single_by_sql($sql, \@binds, $class);
-    return $rows;
+    my $row = $self->single_by_sql($sql, \@binds, $class);
+    return $row;
 }
 
 sub search {
@@ -135,6 +131,9 @@ sub search {
         my $klass = pop;
         ref($klass) ? undef : $klass;
     };
+    if (ref($opt) ne "HASH") {
+        $opt = {};
+    }
 
     if (ref($where) ne "HASH" && ref($where) ne "ARRAY") {
         Carp::croak "'where' required to be HASH or ARRAY";
@@ -150,20 +149,6 @@ sub search {
     return $rows;
 }
 
-sub insert {
-    my $self = shift;
-    my ($table, $args, $opt) = @_;
-    my $class = do {
-        my $klass = pop;
-        ref($klass) ? undef : $klass;
-    };
-
-    $opt->{primary_key} ||= "id";
-
-    my $id = $self->fast_insert($table, $args, $opt->{prefix});
-    return $self->single($table, { $opt->{primary_key} => $id }, $class);
-}
-
 sub fast_insert {
     my ($self, $table, $args, $prefix) = @_;
 
@@ -172,34 +157,47 @@ sub fast_insert {
         $args,
         { prefix => $prefix },
     );
-    $self->execute($sql, \@binds);
-    return $self->_last_insert_id($table);
+    $self->execute($sql, @binds);
+    return $self->current_dbh->last_insert_id($table);
+}
+
+sub insert {
+    my $self = shift;
+    my ($table, $args, $opt) = @_;
+    my $class = do {
+        my $klass = pop;
+        ref($klass) ? undef : $klass;
+    };
+    if (ref($opt) ne "HASH") {
+        $opt = {};
+    }
+
+    if (ref($args) ne "HASH" && ref($args) ne "ARRAY") {
+        Carp::croak "'where' required to be HASH or ARRAY";
+    }
+
+    $opt->{primary_key} ||= "id";
+
+    my $id = $self->fast_insert($table, $args, $opt->{prefix});
+    return $self->single($table, { $opt->{primary_key} => $id }, $class);
 }
 
 sub update {
     my ($self, $table, $args, $where) = @_;
 
     my ($sql, @binds) = $self->sql_builder->update($table, $args, $where);
-    my $sth = $self->execute($sql, \@binds);
-    my $rows = $sth->rows;
-    $sth->finish;
-
-    return $rows;
+    $self->execute($sql, @binds);
 }
 
 sub delete {
     my ($self, $table, $where) = @_;
 
     my ($sql, @binds) = $self->sql_builder->delete($table, $where);
-    my $sth = $self->execute($sql, \@binds);
-    my $rows = $sth->rows;
-    $sth->finish;
-
-    $rows;
+    $self->execute($sql, \@binds);
 }
 
 sub _expand_args (@) {
-    my ($query, @args) = @_;
+    my ($class, $query, @args) = @_;
 
     if (@args == 1 && ref $args[0] eq 'HASH') {
         ( $query, my $binds ) = SQL::NamedPlaceholder::bind_named($query, $args[0]);
@@ -207,23 +205,6 @@ sub _expand_args (@) {
     }
 
     return ($query, @args);
-}
-
-sub _last_insert_id {
-    my ($self, $table_name) = @_;
-
-    my $driver = $self->driver_name;
-    if ( $driver eq 'mysql' ) {
-        return $self->{mysql_insertid};
-    } elsif ( $driver eq 'Pg' ) {
-        return $self->last_insert_id( undef, undef, undef, undef,{ sequence => join( '_', $table_name, 'id', 'seq' ) } );
-    } elsif ( $driver eq 'SQLite' ) {
-        return $self->func('last_insert_rowid');
-    } elsif ( $driver eq 'Oracle' ) {
-        return;
-    } else {
-        Carp::croak "Don't know how to get last insert id for $driver";
-    }
 }
 
 1;
