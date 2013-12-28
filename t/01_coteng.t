@@ -161,6 +161,22 @@ subtest insert => sub {
     }
 };
 
+subtest bulk_insert => sub {
+    my $row = $coteng->bulk_insert(mock => [
+        { name => "mock20" },
+        { name => "mock21" },
+    ]);
+
+    my $found_row = $coteng->single(mock => {
+        name => "mock20" ,
+    });
+    ok $found_row;
+    $found_row = $coteng->single(mock => {
+        name => "mock21",
+    });
+    ok $found_row;
+};
+
 subtest update => sub {
     my $id = $coteng->fast_insert(mock => {
         name => "mock5",

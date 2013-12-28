@@ -182,6 +182,27 @@ sub insert {
     return $self->single($table, { $opt->{primary_key} => $id }, $class);
 }
 
+sub bulk_insert {
+    my ($self, $table, $args) = @_;
+
+    return undef unless scalar(@{$args || []});
+
+    my $dbh = $self->current_dbh;
+    my $can_multi_insert = $dbh->{Driver}->{Name} eq 'mysql' ? 1 : 0;
+
+    if ($can_multi_insert) {
+        my ($sql, @binds) = $self->sql_builder->insert_multi($table, $args);
+        $self->execute($sql, @binds);
+    } else {
+        # use transaction for better performance and atomicity.
+        my $txn = $dbh->txn_scope();
+        for my $arg (@$args) {
+            $self->insert($table, $arg);
+        }
+        $txn->commit;
+    }
+}
+
 sub update {
     my ($self, $table, $args, $where) = @_;
 
