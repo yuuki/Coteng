@@ -54,8 +54,8 @@ sub dbh {
 sub single_by_sql {
     my ($self, $sql, $binds, $class) = @_;
 
-    my $row = $self->current_dbh->select_row($sql, @$binds);
-    if ($class) {
+    my $row = $self->current_dbh->select_row($sql, @$binds) || '';
+    if ($class && $row) {
         load_if_class_not_loaded($class);
         $row = $class->new($row);
     }
@@ -71,8 +71,8 @@ sub single_named {
 
 sub search_by_sql {
     my ($self, $sql, $binds, $class) = @_;
-    my $rows = $self->current_dbh->select_all($sql, @$binds);
-    if ($class) {
+    my $rows = $self->current_dbh->select_all($sql, @$binds) || [];
+    if ($class && @$rows) {
         load_if_class_not_loaded($class);
         $rows = [ map { $class->new($_) } @$rows ];
     }

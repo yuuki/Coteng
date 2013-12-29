@@ -283,6 +283,14 @@ subtest single_by_sql => sub {
             is $row->id, $id;
         }
     };
+
+    subtest 'when return value is empty' => sub {
+        my $row = $coteng->single_by_sql(q[
+            SELECT * FROM mock WHERE id = ?
+        ], [ 1000000 ], "Coteng::Model::Mock");
+
+        is $row, '';
+    };
 };
 
 subtest search_named => sub {
@@ -334,6 +342,14 @@ subtest search_by_sql => sub {
         isa_ok $rows, "ARRAY";
         is scalar(@$rows), 1;
         isa_ok $rows->[0], "Coteng::Model::Mock";
+    };
+
+    subtest 'when return value is empty' => sub {
+        my $rows = $coteng->search_by_sql(q[
+            SELECT * FROM mock WHERE id = ?
+        ], [ 1000000 ], "Coteng::Model::Mock");
+
+        is_deeply $rows, [];
     };
 };
 
