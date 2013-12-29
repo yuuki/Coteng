@@ -290,7 +290,6 @@ Coteng - Lightweight Teng
                 passwd  => 'nobody',
             },
         },
-        root_dbi_class => "Scope::Container::DBI",
     });
 
     my $inserted_host = $coteng->db('db_master')->insert(host => {
@@ -539,6 +538,20 @@ execute your SQL
 =item C<$sth = $coteng-E<gt>execute($sql, [\@bind_values|@bind_values])>
 
 execute query and get statement handler.
+
+=back
+
+=head1 NOTE
+
+=over
+
+=item USING DBI CLASSES
+
+default DBI CLASS is 'DBI'. You can change DBI CLASS via $Coteng::DBI_CLASS.
+
+    local $Coteng::DBI_CLASS = 'Scope::Container::DBI';
+    my $coteng = Coteng->new({ connect_info => ... });
+    $coteng->dbh('db_master')->insert(...);
 
 =back
 
