@@ -5,6 +5,7 @@ Coteng - Lightweight Teng
 
 # SYNOPSIS
 
+```perl
     use Coteng;
 
     my $coteng = Coteng->new({
@@ -83,7 +84,7 @@ Coteng - Lightweight Teng
         )],
         new => 1,
     );
-
+```
 
 
 # DESCRIPTION
@@ -211,7 +212,7 @@ Coteng provides a number of methods to all your classes,
 
 - `$row = $teng->single($table_name, \%search_condition, \%search_attr, [$class])`
 
-    Returns (hash references or $class objects).
+    Returns (hash references or $class objects) or empty string ('') if sql result is empty
 
         my $row = $coteng->single(host => { id => 1 }, 'Your::Model::Host');
 
@@ -219,25 +220,28 @@ Coteng provides a number of methods to all your classes,
 
 - `$rows = $coteng->search($table_name, [\%search_condition, [\%search_attr]], [$class])`
 
-    Returns array reference of (hash references or $class objects).
+    Returns array reference of (hash references or $class objects) or empty array reference (\[\]) if sql result is empty.
 
         my $rows = $coteng->db('db_slave')->search(host => {id => 1}, {order_by => 'id'}, 'Your::Model::Host');
 
 - `$row = $teng->single_named($sql, [\%bind_values], [$class])`
 
-    get one record from execute named query
+    Gets one record from execute named query
+    Returns empty string ( '' ) if sql result is empty.
 
         my $row = $coteng->dbh('db_slave')->single_named(q{SELECT id,name FROM host WHERE id = :id LIMIT 1}, {id => 1}, 'Your::Model::Host');
 
 - `$row = $coteng->single_by_sql($sql, [\@bind_values], $class)`
 
-    get one record from your SQL.
+    Gets one record from your SQL.
+    Returns empty string ('') if sql result is empty.
 
         my $row = $coteng->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
 
 - `$rows = $coteng->search_named($sql, [\%bind_values], [$class])`
 
-    execute named query
+    Execute named query
+    Returns empty array reference (\[\]) if sql result is empty.
 
         my $itr = $coteng->db('db_slave')->search_named(q[SELECT * FROM user WHERE id = :id], {id => 1}, 'Your::Model::Host');
 
@@ -250,7 +254,8 @@ Coteng provides a number of methods to all your classes,
 
 - `$rows = $coteng->search_by_sql($sql, [\@bind_values], [$class])`
 
-    execute your SQL
+    Execute your SQL.
+    Returns empty array reference (\[\]) if sql result is empty.
 
         my $rows = $coteng->dbh('db_slave')->search_by_sql(q{
             SELECT

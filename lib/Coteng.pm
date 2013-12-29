@@ -493,7 +493,7 @@ Deletes the specified record(s) from C<$table> and returns the number of rows de
 
 =item C<$row = $teng-E<gt>single($table_name, \%search_condition, \%search_attr, [$class])>
 
-Returns (hash references or $class objects).
+Returns (hash references or $class objects) or empty string ('') if sql result is empty
 
     my $row = $coteng->single(host => { id => 1 }, 'Your::Model::Host');
 
@@ -501,25 +501,28 @@ Returns (hash references or $class objects).
 
 =item C<$rows = $coteng-E<gt>search($table_name, [\%search_condition, [\%search_attr]], [$class])>
 
-Returns array reference of (hash references or $class objects).
+Returns array reference of (hash references or $class objects) or empty array reference ([]) if sql result is empty.
 
     my $rows = $coteng->db('db_slave')->search(host => {id => 1}, {order_by => 'id'}, 'Your::Model::Host');
 
 =item C<$row = $teng-E<gt>single_named($sql, [\%bind_values], [$class])>
 
-get one record from execute named query
+Gets one record from execute named query
+Returns empty string ( '' ) if sql result is empty.
 
     my $row = $coteng->dbh('db_slave')->single_named(q{SELECT id,name FROM host WHERE id = :id LIMIT 1}, {id => 1}, 'Your::Model::Host');
 
 =item C<$row = $coteng-E<gt>single_by_sql($sql, [\@bind_values], $class)>
 
-get one record from your SQL.
+Gets one record from your SQL.
+Returns empty string ('') if sql result is empty.
 
     my $row = $coteng->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
 
 =item C<$rows = $coteng-E<gt>search_named($sql, [\%bind_values], [$class])>
 
-execute named query
+Execute named query
+Returns empty array reference ([]) if sql result is empty.
 
     my $itr = $coteng->db('db_slave')->search_named(q[SELECT * FROM user WHERE id = :id], {id => 1}, 'Your::Model::Host');
 
@@ -532,7 +535,8 @@ It's useful in case use IN statement.
 
 =item C<$rows = $coteng-E<gt>search_by_sql($sql, [\@bind_values], [$class])>
 
-execute your SQL
+Execute your SQL.
+Returns empty array reference ([]) if sql result is empty.
 
     my $rows = $coteng->dbh('db_slave')->search_by_sql(q{
         SELECT
