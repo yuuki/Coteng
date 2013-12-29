@@ -5,6 +5,7 @@ Coteng - Lightweight Teng
 
 # SYNOPSIS
 
+```perl
     use Coteng;
 
     my $coteng = Coteng->new({
@@ -83,16 +84,16 @@ Coteng - Lightweight Teng
         )],
         new => 1,
     );
-
+```
 
 
 # DESCRIPTION
 
-Coteng is a lightweight [Teng](http://search.cpan.org/perldoc?Teng), just as very simple DBI wrapper.
-Teng is a simple and good designed ORMapper, but it has a little complicated functions such as the row class, iterator class, the schema definition class ([Teng::Row](http://search.cpan.org/perldoc?Teng::Row), [Teng::Iterator](http://search.cpan.org/perldoc?Teng::Iterator) and [Teng::Schema](http://search.cpan.org/perldoc?Teng::Schema)).
+Coteng is a lightweight [Teng](https://metacpan.org/pod/Teng), just as very simple DBI wrapper.
+Teng is a simple and good designed ORMapper, but it has a little complicated functions such as the row class, iterator class, the schema definition class ([Teng::Row](https://metacpan.org/pod/Teng::Row), [Teng::Iterator](https://metacpan.org/pod/Teng::Iterator) and [Teng::Schema](https://metacpan.org/pod/Teng::Schema)).
 Coteng doesn't have such functions and only has very similar Teng SQL interface.
 
-Coteng itself has no transaction and last\_insert\_id interface, thanks to [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny).
+Coteng itself has no transaction and last\_insert\_id interface, thanks to [DBIx::Sunny](https://metacpan.org/pod/DBIx::Sunny).
 (Coteng uses DBIx::Sunny as a base DB handler.)
 
 # METHODS
@@ -265,6 +266,16 @@ Coteng provides a number of methods to all your classes,
 
     execute query and get statement handler.
 
+- `$txn = $coteng->txn_scope()`
+
+    Returns DBIx::TransactionManager::ScopeGuard object
+
+        {
+            my $txn = $coteng->db('db_master')->txn_scope();
+            ...
+            $txn->commit;
+        }
+
 # NOTE
 
 - USING DBI CLASSES
@@ -277,9 +288,9 @@ Coteng provides a number of methods to all your classes,
 
 # SEE ALSO
 
-- [Teng](http://search.cpan.org/perldoc?Teng)
-- [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny)
-- [SQL::Maker](http://search.cpan.org/perldoc?SQL::Maker)
+- [Teng](https://metacpan.org/pod/Teng)
+- [DBIx::Sunny](https://metacpan.org/pod/DBIx::Sunny)
+- [SQL::Maker](https://metacpan.org/pod/SQL::Maker)
 
 # LICENSE
 

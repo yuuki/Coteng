@@ -542,6 +542,16 @@ execute your SQL
 
 execute query and get statement handler.
 
+=item C<$txn = $coteng-E<gt>txn_scope()>
+
+Returns DBIx::TransactionManager::ScopeGuard object
+
+    {
+        my $txn = $coteng->db('db_master')->txn_scope();
+        ...
+        $txn->commit;
+    }
+
 =back
 
 =head1 NOTE
