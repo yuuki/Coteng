@@ -211,6 +211,11 @@ sub delete {
     $self->execute($sql, \@binds);
 }
 
+sub txn_scope {
+    my $self = shift;
+    $self->current_dbh->txn_scope;
+}
+
 sub _expand_args (@) {
     my ($class, $query, @args) = @_;
 

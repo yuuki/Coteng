@@ -326,5 +326,10 @@ subtest execute => sub {
     is $found_row->{id}, $coteng->current_dbh->last_insert_id;
 };
 
+subtest txn_scope => sub {
+    my $txn = $coteng->txn_scope();
+    isa_ok $txn, "DBIx::TransactionManager::ScopeGuard";
+    $txn->commit;
+};
 
 done_testing;
