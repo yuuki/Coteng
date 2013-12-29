@@ -2,6 +2,8 @@ Revision history for Perl extension Coteng
 
 {{$NEXT}}
 
+0.03 2013-12-29T09:35:12Z
+
     - Add transaction support (DBIx::Sunny)
 
 0.02 2013-12-29T08:13:56Z
