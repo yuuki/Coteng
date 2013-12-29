@@ -2,6 +2,10 @@ Revision history for Perl extension Coteng
 
 {{$NEXT}}
 
+0.06 2013-12-29T19:54:58Z
+
+    - Fix return value of selecter methods (single, search, single_named, search_named, single_by_sql, search_by_sql)
+
 0.05 2013-12-29T18:15:58Z
 
     - Fix delete method bug.
