@@ -206,7 +206,7 @@ sub delete {
     my ($self, $table, $where) = @_;
 
     my ($sql, @binds) = $self->sql_builder->delete($table, $where);
-    $self->execute($sql, \@binds);
+    $self->execute($sql, @binds);
 }
 
 sub last_insert_id {
