@@ -22,7 +22,6 @@ subtest new => sub {
                 passwd  => 'nobody',
             },
         },
-        root_dbi_class => "Scope::Container::DBI",
     });
 
     if (ok $coteng) {
@@ -37,7 +36,6 @@ subtest new => sub {
             user    => 'nobody',
             passwd  => 'nobody',
         };
-        is $coteng->{root_dbi_class}, "Scope::Container::DBI";
     }
 };
 
@@ -71,8 +69,8 @@ subtest dbh => sub {
             },
         },
     });
-    isa_ok $coteng->dbh('db_master'), 'DBIx::Sunny::db';
-    isa_ok $coteng->dbh('db_slave'),  'DBIx::Sunny::db';
+    isa_ok $coteng->dbh('db_master'), 'Coteng::DBI::db';
+    isa_ok $coteng->dbh('db_slave'),  'Coteng::DBI::db';
 };
 
 
@@ -86,7 +84,7 @@ my $coteng = Coteng->new({
         },
     },
 });
-$coteng->{current_dbh} = $dbh;
+$coteng->current_dbh($dbh);
 
 subtest single => sub {
     my $id = insert_mock($dbh, name => "mock1");
