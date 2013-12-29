@@ -192,17 +192,39 @@ subtest update => sub {
 };
 
 subtest delete => sub {
-    my $id = $coteng->fast_insert(mock => {
-        name => "mock6",
-    });
+    subtest 'when delete single rows' => sub {
+        my $id = $coteng->fast_insert(mock => {
+            name => "mock6",
+        });
 
-    my $deleted_row_count = $coteng->delete(mock => { id => $id });
+        my $deleted_row_count = $coteng->delete(mock => { id => $id });
 
-    my $found_row = $coteng->single(mock => {
-        name => "mock6",
-    });
-    ok !$found_row;
-    is $deleted_row_count, 1;
+        my $found_row = $coteng->single(mock => {
+            id => $id,
+        });
+        ok !$found_row;
+        is $deleted_row_count, 1;
+    };
+
+    subtest 'when delete multiple rows' => sub {
+        my $id1 = $coteng->fast_insert(mock => {
+            name => "mock7",
+        });
+        my $id2 = $coteng->fast_insert(mock => {
+            name => "mock8",
+        });
+        my $deleted_row_count = $coteng->delete(mock => { id => [ $id1, $id2 ]});
+        is $deleted_row_count, 2;
+
+        my $found_row = $coteng->single(mock => {
+            id => $id1,
+        });
+        ok !$found_row;
+        $found_row = $coteng->single(mock => {
+            id => $id2,
+        });
+        ok !$found_row;
+    };
 };
 
 subtest single_named => sub {
