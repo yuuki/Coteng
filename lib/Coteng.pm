@@ -16,6 +16,7 @@ use Class::Accessor::Lite::Lazy (
     rw_lazy => [qw(
         sql_builder
     )],
+    new => 1
 );
 
 use Coteng::DBI;
@@ -24,14 +25,6 @@ use Coteng::DBI;
 sub _build_sql_builder {
     my ($self) = @_;
     return SQL::Maker->new(driver => $self->current_dbh->{Driver}{Name});
-}
-
-sub new {
-    my ($class, $args) = @_;
-    my $self = bless {
-        connect_info => $args->{connect_info} || undef,
-    }, $class;
-    return $self;
 }
 
 sub db {
