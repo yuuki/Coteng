@@ -7,7 +7,7 @@ our $VERSION = "0.02";
 our $DBI_CLASS = 'DBI';
 
 use Carp ();
-use Module::Load qw(load);
+use Module::Load ();
 use SQL::Maker;
 use Class::Accessor::Lite::Lazy (
     rw => [qw(
@@ -43,9 +43,7 @@ sub dbh {
         my $user    = defined $db_info->{user}   ? $db_info->{user} : '';
         my $passwd  = defined $db_info->{passwd} ? $db_info->{passwd} : '';
 
-        if (! is_class_loaded($DBI_CLASS)) {
-            load $DBI_CLASS;
-        }
+        load_if_class_not_loaded($DBI_CLASS);
         my $dbh = $DBI_CLASS->connect($dsn, $user, $passwd, {
             RootClass => 'Coteng::DBI'
         });
@@ -58,7 +56,7 @@ sub single_by_sql {
 
     my $row = $self->current_dbh->select_row($sql, @$binds);
     if ($class) {
-        load $class;
+        load_if_class_not_loaded($class);
         $row = $class->new($row);
     }
     return $row;
@@ -75,7 +73,7 @@ sub search_by_sql {
     my ($self, $sql, $binds, $class) = @_;
     my $rows = $self->current_dbh->select_all($sql, @$binds);
     if ($class) {
-        load $class;
+        load_if_class_not_loaded($class);
         $rows = [ map { $class->new($_) } @$rows ];
     }
     return $rows;
@@ -225,6 +223,13 @@ sub _expand_args (@) {
     }
 
     return ($query, @args);
+}
+
+sub load_if_class_not_loaded {
+    my $class = shift;
+    if (! is_class_loaded($class)) {
+        Module::Load::load $class;
+    }
 }
 
 # stolen from Mouse::PurePerl
