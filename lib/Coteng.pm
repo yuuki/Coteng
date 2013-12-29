@@ -3,7 +3,7 @@ use 5.008005;
 use strict;
 use warnings;
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 our $DBI_CLASS = 'DBI';
 
 use Carp ();
@@ -209,6 +209,11 @@ sub delete {
     $self->execute($sql, \@binds);
 }
 
+sub last_insert_id {
+    my $self = shift;
+    $self->current_dbh->last_insert_id;
+}
+
 sub txn_scope {
     my $self = shift;
     $self->current_dbh->txn_scope;
@@ -363,7 +368,7 @@ Coteng is a lightweight L<Teng>, just as very simple DBI wrapper.
 Teng is a simple and good designed ORMapper, but it has a little complicated functions such as the row class, iterator class, the schema definition class (L<Teng::Row>, L<Teng::Iterator> and L<Teng::Schema>).
 Coteng doesn't have such functions and only has very similar Teng SQL interface.
 
-Coteng itself has no transaction and last_insert_id interface, thanks to L<DBIx::Sunny>.
+Coteng itself has no transaction and last_insert_id implementation, but has thir interface thanks to L<DBIx::Sunny>.
 (Coteng uses DBIx::Sunny as a base DB handler.)
 
 =head1 METHODS
@@ -541,6 +546,10 @@ execute your SQL
 =item C<$sth = $coteng-E<gt>execute($sql, [\@bind_values|@bind_values])>
 
 execute query and get statement handler.
+
+=item C<$id = $coteng-E<gt>last_insert_id()>
+
+Returns last_insert_id.
 
 =item C<$txn = $coteng-E<gt>txn_scope()>
 
