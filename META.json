@@ -4,7 +4,7 @@
       "y_uuki <yuki.tsubo@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.11.0, CPAN::Meta::Converter version 2.133380",
+   "generated_by" : "Minilla/v0.11.0, CPAN::Meta::Converter version 2.120921",
    "license" : [
       "perl_5"
    ],
@@ -73,6 +73,6 @@
          "web" : "https://github.com/y-uuki/Coteng"
       }
    },
-   "version" : "0.06",
+   "version" : "0.07",
    "x_authority" : "cpan:YUUKI"
 }
