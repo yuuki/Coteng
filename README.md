@@ -33,10 +33,26 @@ Coteng - Lightweight Teng
                 }
             ],
             db_slave => [
-                'dbi:mysql:dbname=server;host=dbslavehost', 'nobody', 'nbody',
+                'dbi:mysql:dbname=server;host=dbslavehost', 'nobody', 'nobody',
             ],
         },
     });
+
+    # or
+
+    use Coteng::DBI;
+
+    my $dbh1 = Coteng::DBI->connect('dbi:mysql:dbname=server;host=dbmasterhost', 'nobody', 'npbody');
+    my $dbh2 = Coteng::DBI->connect('dbi:mysql:dbname=server;host=dbslavehost', 'nobody', 'npbody');
+
+    my $coteng = Coteng->new({
+        dbh => {
+            db_master   => $dbh1,
+            db_slave    => $dbh2,
+        },
+    });
+
+
 
     my $inserted_host = $coteng->db('db_master')->insert(host => {
         name    => 'host001',
@@ -154,6 +170,14 @@ Coteng provides a number of methods to all your classes,
             },
 
         'dbname' is something you like to identify a database type such as 'db\_master', 'db\_slave', 'db\_batch'.
+
+    - `dbh`
+
+        Passes the dbh object.
+
+            {
+                dbname => $dbh,
+            },
 
 - `$row = $coteng->db($dbname)`
 
