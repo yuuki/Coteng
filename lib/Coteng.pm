@@ -327,6 +327,21 @@ Coteng - Lightweight Teng
         },
     });
 
+    # or
+
+    my $coteng = Coteng->new({
+        connect_info => {
+            db_master => [
+                'dbi:mysql:dbname=server;host=dbmasterhost', 'nobody', 'nobody', {
+                    PrintError => 0,
+                }
+            ],
+            db_slave => [
+                'dbi:mysql:dbname=server;host=dbslavehost', 'nobody', 'nbody',
+            ],
+        },
+    });
+
     my $inserted_host = $coteng->db('db_master')->insert(host => {
         name    => 'host001',
         ipv4    => '10.0.0.1',
@@ -415,6 +430,7 @@ Creates a new Coteng instance.
                 dsn     => $dsn,
                 user    => $user,
                 passwd  => $passwd,
+                attr    => \%attr,
             },
         },
     });
@@ -433,7 +449,14 @@ The argument should be a reference to a nested hash in the form:
             dsn     => $dsn,
             user    => $user,
             passwd  => $passwd,
+            attr    => \%attr,
         },
+    },
+
+or a array referece in the form
+
+    {
+        dbname => [ $dsn, $user, $passwd, \%attr ],
     },
 
 'dbname' is something you like to identify a database type such as 'db_master', 'db_slave', 'db_batch'.
