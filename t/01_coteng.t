@@ -353,6 +353,24 @@ subtest search_by_sql => sub {
     };
 };
 
+subtest count => sub {
+    subtest 'when return value is not empty' => sub {
+        my $id1 = $coteng->fast_insert(mock => {
+            name => "mock20",
+            delete_fg => 1,
+        });
+        my $id2 = $coteng->fast_insert(mock => {
+            name => "mock21",
+            delete_fg => 1,
+        });
+        my $cnt = $coteng->count('mock', '*', {
+            delete_fg => 1,
+        });
+
+        is $cnt, 2;
+    };
+};
+
 subtest execute => sub {
     $coteng->execute(q[
         INSERT INTO mock (name) VALUES (:name)

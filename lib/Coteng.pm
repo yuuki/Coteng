@@ -209,6 +209,21 @@ sub delete {
     $self->execute($sql, @binds);
 }
 
+sub count {
+    my ($self, $table, $column, $where, $opt) = @_;
+
+    if (ref $column eq 'HASH') {
+        Carp::croak('Do not pass HashRef to second argument. Usage: $db->count($table[, $column[, $where[, $opt]]])');
+    }
+
+    $column ||= '*';
+
+    my ($sql, @binds) = $self->sql_builder->select($table, [\"COUNT($column)"], $where, $opt);
+
+    my ($cnt) = $self->current_dbh->select_one($sql, @binds);
+    $cnt;
+}
+
 sub last_insert_id {
     my $self = shift;
     $self->current_dbh->last_insert_id;
