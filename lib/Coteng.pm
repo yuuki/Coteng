@@ -22,11 +22,6 @@ use Coteng::DBI;
 use Coteng::QueryBuilder;
 
 
-sub _build_sql_builder {
-    my ($self) = @_;
-    return Coteng::QueryBuilder->new(driver => $self->current_dbh->{Driver}{Name});
-}
-
 sub db {
     my ($self, $dbname) = @_;
     $dbname || Carp::croak "dbname required";
@@ -49,6 +44,11 @@ sub dbh {
         });
         $dbh;
     };
+}
+
+sub _build_sql_builder {
+    my ($self) = @_;
+    return Coteng::QueryBuilder->new(driver => $self->current_dbh->{Driver}{Name});
 }
 
 sub single_by_sql {
@@ -546,14 +546,14 @@ It's useful in case use IN statement.
 
     # SELECT * FROM user WHERE id IN (?,?,?);
     # bind [1,2,3]
-    my $rows = $coteng->dbh('db_slave')->search_named(q[SELECT * FROM user WHERE id IN :ids], {ids => [1, 2, 3]}, 'Your::Model::Host');
+    my $rows = $coteng->db('db_slave')->search_named(q[SELECT * FROM user WHERE id IN :ids], {ids => [1, 2, 3]}, 'Your::Model::Host');
 
 =item C<$rows = $coteng-E<gt>search_by_sql($sql, [\@bind_values], [$class])>
 
 Execute your SQL.
 Returns empty array reference ([]) if sql result is empty.
 
-    my $rows = $coteng->dbh('db_slave')->search_by_sql(q{
+    my $rows = $coteng->db('db_slave')->search_by_sql(q{
         SELECT
             id, name
         FROM
@@ -561,6 +561,15 @@ Returns empty array reference ([]) if sql result is empty.
         WHERE
             id = ?
     }, [ 1 ]);
+
+=item C<$count = $coteng-E<gt>count($table, [$table[, $column[, $where[, $opt]]])>
+
+Execute count SQL.
+Returns record counts.
+
+    my $count = $coteng->dbh(host, '*', {
+        status => 'working',
+    });
 
 =item C<$sth = $coteng-E<gt>execute($sql, [\@bind_values|@bind_values])>
 
