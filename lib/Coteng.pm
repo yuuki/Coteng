@@ -11,6 +11,7 @@ use Module::Load ();
 use Class::Accessor::Lite::Lazy (
     rw => [qw(
         current_dbh
+        connect_info
     )],
     rw_lazy => [qw(
         sql_builder
@@ -24,7 +25,7 @@ use Coteng::QueryBuilder;
 
 sub db {
     my ($self, $dbname) = @_;
-    $dbname || Carp::croak "dbname required";
+    $dbname or Carp::croak "dbname required";
     $self->current_dbh($self->dbh($dbname));
     $self;
 }
@@ -33,15 +34,26 @@ sub dbh {
     my ($self, $dbname) = @_;
 
     $self->{_dbh}{$dbname} ||= do {
-        my $db_info = $self->{connect_info}->{$dbname};
-        my $dsn     = $db_info->{dsn} || Carp::croak "dsn required";
-        my $user    = defined $db_info->{user}   ? $db_info->{user} : '';
-        my $passwd  = defined $db_info->{passwd} ? $db_info->{passwd} : '';
+        my $db_info = $self->{connect_info}->{$dbname} || Carp::croak "'$dbname' doesn't exist";
+
+        my ($dsn, $user, $passwd, $attr) = ('', '', '', {});
+        if (ref($db_info) eq 'HASH') {
+            $dsn    = $db_info->{dsn} || Carp::croak "dsn required";
+            $user   = defined $db_info->{user}   ? $db_info->{user} : '';
+            $passwd = defined $db_info->{passwd} ? $db_info->{passwd} : '';
+            $attr   = $db_info->{attr};
+        }
+        elsif (ref($db_info) eq 'ARRAY') {
+            ($dsn, $user, $passwd, $attr) = @$db_info;
+        }
+        else {
+            Carp::croak 'connect_info->{$dbname} must be HASHref, or ARRAYref';
+        }
 
         load_if_class_not_loaded($DBI_CLASS);
-        my $dbh = $DBI_CLASS->connect($dsn, $user, $passwd, {
-            RootClass => 'Coteng::DBI'
-        });
+
+        $attr->{RootClass} ||= 'Coteng::DBI';
+        my $dbh = $DBI_CLASS->connect($dsn, $user, $passwd, $attr);
         $dbh;
     };
 }
