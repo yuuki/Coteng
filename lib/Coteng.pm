@@ -32,8 +32,9 @@ sub db {
 
 sub dbh {
     my ($self, $dbname) = @_;
+    $dbname or Carp::croak "dbname required";
 
-    $self->{_dbh}{$dbname} ||= do {
+    $self->{dbh}{$dbname} ||= do {
         my $db_info = $self->{connect_info}->{$dbname} || Carp::croak "'$dbname' doesn't exist";
 
         my ($dsn, $user, $passwd, $attr) = ('', '', '', {});

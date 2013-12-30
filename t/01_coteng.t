@@ -4,6 +4,8 @@ use warnings;
 use t::cotengtest;
 use Test::More;
 
+use DBIx::Sunny;
+
 subtest use => sub {
     use_ok "Coteng";
 };
@@ -41,6 +43,27 @@ subtest new => sub {
 
 subtest db => sub {
 
+    my $coteng = Coteng->new({
+        connect_info => {
+            db_master => {
+                dsn => 'dbi:SQLite::memory:',
+            },
+            db_slave => {
+                dsn => 'dbi:SQLite::memory:',
+            },
+        },
+    });
+
+    isa_ok $coteng->db('db_master'), 'Coteng';
+    is $coteng->current_dbh, $coteng->{dbh}{db_master};
+
+    isa_ok $coteng->db('db_slave'),  'Coteng';
+    is $coteng->current_dbh, $coteng->{dbh}{db_slave};
+
+};
+
+subtest dbh => sub {
+
     subtest 'hash reference' => sub {
         my $coteng = Coteng->new({
             connect_info => {
@@ -52,12 +75,8 @@ subtest db => sub {
                 },
             },
         });
-
-        isa_ok $coteng->db('db_master'), 'Coteng';
-        is $coteng->current_dbh, $coteng->{_dbh}{db_master};
-
-        isa_ok $coteng->db('db_slave'),  'Coteng';
-        is $coteng->current_dbh, $coteng->{_dbh}{db_slave};
+        isa_ok $coteng->dbh('db_master'), 'Coteng::DBI::db';
+        isa_ok $coteng->dbh('db_slave'),  'Coteng::DBI::db';
     };
 
     subtest 'array reference' => sub {
@@ -67,29 +86,25 @@ subtest db => sub {
                 db_slave    => [ 'dbi:SQLite::memory:' ],
             },
         });
-
-        isa_ok $coteng->db('db_master'), 'Coteng';
-        is $coteng->current_dbh, $coteng->{_dbh}{db_master};
-
-        isa_ok $coteng->db('db_slave'),  'Coteng';
-        is $coteng->current_dbh, $coteng->{_dbh}{db_slave};
+        isa_ok $coteng->dbh('db_master'), 'Coteng::DBI::db';
+        isa_ok $coteng->dbh('db_slave'),  'Coteng::DBI::db';
     };
 
-};
+    subtest 'dbh' => sub {
+        my $dbh1 = DBIx::Sunny->connect('dbi:SQLite::memory:');
+        my $dbh2 = DBIx::Sunny->connect('dbi:SQLite::memory:');
 
-subtest dbh => sub {
-    my $coteng = Coteng->new({
-        connect_info => {
-            db_master => {
-                dsn => 'dbi:SQLite::memory:',
+        my $coteng = Coteng->new({
+            dbh => {
+                db_master   => $dbh1,
+                db_slave    => $dbh2,
             },
-            db_slave => {
-                dsn => 'dbi:SQLite::memory:',
-            },
-        },
-    });
-    isa_ok $coteng->dbh('db_master'), 'Coteng::DBI::db';
-    isa_ok $coteng->dbh('db_slave'),  'Coteng::DBI::db';
+        });
+
+        is $coteng->dbh('db_master'), $dbh1;
+        is $coteng->dbh('db_slave'),  $dbh2;
+    };
+
 };
 
 
