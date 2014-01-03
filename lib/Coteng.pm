@@ -8,6 +8,7 @@ our $DBI_CLASS = 'DBI';
 
 use Carp ();
 use Module::Load ();
+use SQL::NamedPlaceholder ();
 use Class::Accessor::Lite::Lazy (
     rw => [qw(
         current_dbh
