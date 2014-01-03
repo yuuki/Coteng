@@ -97,7 +97,7 @@ Coteng - Lightweight Teng
     my $hosts = $coteng->db('db_slave')->search_named(q[
         SELECT * FROM host where status = :status
     ], { status => "working" }, "Your::Model::Host");
-    my $hosts = $coteng->db('db_slave')->search_named(q[
+    my $hosts = $coteng->db('db_slave')->search_by_sql(q[
         SELECT * FROM host where status = ?
     ], [ "working" ], "Your::Model::Host");
 
