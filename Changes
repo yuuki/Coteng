@@ -2,6 +2,10 @@ Revision history for Perl extension Coteng
 
 {{$NEXT}}
 
+0.08 2014-01-03T19:10:41Z
+
+    - Fix missing load SQL::NamedPlaceholder
+
 0.07 2013-12-30T11:00:18Z
 
     - Add Coteng#new to DBI->connect format param
