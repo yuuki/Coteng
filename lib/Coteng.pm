@@ -478,19 +478,9 @@ or a array referece in the form
 
 'dbname' is something you like to identify a database type such as 'db_master', 'db_slave', 'db_batch'.
 
-=item * C<dbh>
-
-Passes the dbh object.
-
-    {
-        dbname => $dbh,
-    },
-
-=back
-
 =item C<$row = $coteng-E<gt>db($dbname)>
 
-Set internal current dbh object by $dbname registered in 'new' method.
+Set internal current db by $dbname registered in 'new' method.
 Returns Coteng object ($self) to enable you to use method chain like below.
 
     my $row = $coteng->db('db_master')->insert();
@@ -570,9 +560,9 @@ Deletes the specified record(s) from C<$table> and returns the number of rows de
 
 Returns (hash references or $class objects) or empty string ('') if sql result is empty
 
-    my $row = $coteng->single(host => { id => 1 }, 'Your::Model::Host');
+    my $row = $coteng->db('db_slave')->single(host => { id => 1 }, 'Your::Model::Host');
 
-    my $row = $coteng->single(host => { id => 1 }, { columns => [qw(id name)] });
+    my $row = $coteng->db('db_slave')->single(host => { id => 1 }, { columns => [qw(id name)] });
 
 =item C<$rows = $coteng-E<gt>search($table_name, [\%search_condition, [\%search_attr]], [$class])>
 
@@ -585,14 +575,14 @@ Returns array reference of (hash references or $class objects) or empty array re
 Gets one record from execute named query
 Returns empty string ( '' ) if sql result is empty.
 
-    my $row = $coteng->dbh('db_slave')->single_named(q{SELECT id,name FROM host WHERE id = :id LIMIT 1}, {id => 1}, 'Your::Model::Host');
+    my $row = $coteng->db('db_slave')->single_named(q{SELECT id,name FROM host WHERE id = :id LIMIT 1}, {id => 1}, 'Your::Model::Host');
 
 =item C<$row = $coteng-E<gt>single_by_sql($sql, [\@bind_values], $class)>
 
 Gets one record from your SQL.
 Returns empty string ('') if sql result is empty.
 
-    my $row = $coteng->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
+    my $row = $coteng->db('db_slave')->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
 
 =item C<$rows = $coteng-E<gt>search_named($sql, [\%bind_values], [$class])>
 
@@ -627,7 +617,7 @@ Returns empty array reference ([]) if sql result is empty.
 Execute count SQL.
 Returns record counts.
 
-    my $count = $coteng->dbh(host, '*', {
+    my $count = $coteng->count(host, '*', {
         status => 'working',
     });
 
