@@ -170,198 +170,190 @@ Coteng provides a number of methods to all your classes,
 
         'dbname' is something you like to identify a database type such as 'db\_master', 'db\_slave', 'db\_batch'.
 
-    - `dbh`
+    - `$row = $coteng->db($dbname)`
 
-        Passes the dbh object.
+        Set internal current db by $dbname registered in 'new' method.
+        Returns Coteng object ($self) to enable you to use method chain like below.
 
-            {
-                dbname => $dbh,
-            },
+            my $row = $coteng->db('db_master')->insert();
 
-- `$row = $coteng->db($dbname)`
+    - `$row = $coteng->insert($table, \%row_data, [\%opt], [$class])`
 
-    Set internal current dbh object by $dbname registered in 'new' method.
-    Returns Coteng object ($self) to enable you to use method chain like below.
+        Inserts a new record. Returns the inserted row object blessed $class.
+        If it's not specified $class, returns the hash reference.
 
-        my $row = $coteng->db('db_master')->insert();
-
-- `$row = $coteng->insert($table, \%row_data, [\%opt], [$class])`
-
-    Inserts a new record. Returns the inserted row object blessed $class.
-    If it's not specified $class, returns the hash reference.
-
-        my $row = $coteng->db('db_master')->insert(host => {
-            id   => 1,
-            ipv4 => '192.168.0.0',
-        }, { primary_key => 'host_id', prefix => 'SELECT DISTINCT' } );
-
-    'primary\_key' default value is 'id'.
-    'prefix' default value is 'SELECT'.
-
-    If a primary key is available, it will be fetched after the insert -- so
-    an INSERT followed by SELECT is performed. If you do not want this, use
-    `fast_insert`.
-
-- `$last_insert_id = $teng->fast_insert($table_name, \%row_data, [$prefix]);`
-
-    insert new record and get last\_insert\_id.
-
-    no creation row object.
-
-- `$teng->bulk_insert($table_name, \@rows_data)`
-
-    Accepts either an arrayref of hashrefs.
-    Each hashref should be a structure suitable for your table schema.
-    The second argument is an arrayref of hashrefs. All of the keys in these hashrefs must be exactly the same.
-
-    insert many record by bulk.
-
-    example:
-
-        $coteng->db('db_master')->bulk_insert(host => [
-            {
+            my $row = $coteng->db('db_master')->insert(host => {
                 id   => 1,
-                name => 'host001',
-            },
-            {
-                id   => 2,
-                name => 'host002',
-            },
-            {
-                id   => 3,
-                name => 'host003',
-            },
-        ]);
+                ipv4 => '192.168.0.0',
+            }, { primary_key => 'host_id', prefix => 'SELECT DISTINCT' } );
 
-- `$update_row_count = $coteng->update($table_name, \%update_row_data, [\%update_condition])`
+        'primary\_key' default value is 'id'.
+        'prefix' default value is 'SELECT'.
 
-    Calls UPDATE on `$table_name`, with values specified in `%update_ro_data`, and returns the number of rows updated. You may optionally specify `%update_condition` to create a conditional update query.
+        If a primary key is available, it will be fetched after the insert -- so
+        an INSERT followed by SELECT is performed. If you do not want this, use
+        `fast_insert`.
 
-        my $update_row_count = $coteng->db('db_master')->update(host =>
-            {
-                name => 'host001',
-            },
-            {
+    - `$last_insert_id = $teng->fast_insert($table_name, \%row_data, [$prefix]);`
+
+        insert new record and get last\_insert\_id.
+
+        no creation row object.
+
+    - `$teng->bulk_insert($table_name, \@rows_data)`
+
+        Accepts either an arrayref of hashrefs.
+        Each hashref should be a structure suitable for your table schema.
+        The second argument is an arrayref of hashrefs. All of the keys in these hashrefs must be exactly the same.
+
+        insert many record by bulk.
+
+        example:
+
+            $coteng->db('db_master')->bulk_insert(host => [
+                {
+                    id   => 1,
+                    name => 'host001',
+                },
+                {
+                    id   => 2,
+                    name => 'host002',
+                },
+                {
+                    id   => 3,
+                    name => 'host003',
+                },
+            ]);
+
+    - `$update_row_count = $coteng->update($table_name, \%update_row_data, [\%update_condition])`
+
+        Calls UPDATE on `$table_name`, with values specified in `%update_ro_data`, and returns the number of rows updated. You may optionally specify `%update_condition` to create a conditional update query.
+
+            my $update_row_count = $coteng->db('db_master')->update(host =>
+                {
+                    name => 'host001',
+                },
+                {
+                    id => 1
+                }
+            );
+            # Executes UPDATE user SET name = 'host001' WHERE id = 1
+
+    - `$delete_row_count = $coteng->delete($table, \%delete_condition)`
+
+        Deletes the specified record(s) from `$table` and returns the number of rows deleted. You may optionally specify `%delete_condition` to create a conditional delete query.
+
+            my $rows_deleted = $coteng->db('db_master')->delete(host => {
                 id => 1
+            });
+            # Executes DELETE FROM host WHERE id = 1
+
+    - `$row = $teng->single($table_name, \%search_condition, \%search_attr, [$class])`
+
+        Returns (hash references or $class objects) or empty string ('') if sql result is empty
+
+            my $row = $coteng->db('db_slave')->single(host => { id => 1 }, 'Your::Model::Host');
+
+            my $row = $coteng->db('db_slave')->single(host => { id => 1 }, { columns => [qw(id name)] });
+
+    - `$rows = $coteng->search($table_name, [\%search_condition, [\%search_attr]], [$class])`
+
+        Returns array reference of (hash references or $class objects) or empty array reference (\[\]) if sql result is empty.
+
+            my $rows = $coteng->db('db_slave')->search(host => {id => 1}, {order_by => 'id'}, 'Your::Model::Host');
+
+    - `$row = $teng->single_named($sql, [\%bind_values], [$class])`
+
+        Gets one record from execute named query
+        Returns empty string ( '' ) if sql result is empty.
+
+            my $row = $coteng->db('db_slave')->single_named(q{SELECT id,name FROM host WHERE id = :id LIMIT 1}, {id => 1}, 'Your::Model::Host');
+
+    - `$row = $coteng->single_by_sql($sql, [\@bind_values], $class)`
+
+        Gets one record from your SQL.
+        Returns empty string ('') if sql result is empty.
+
+            my $row = $coteng->db('db_slave')->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
+
+    - `$rows = $coteng->search_named($sql, [\%bind_values], [$class])`
+
+        Execute named query
+        Returns empty array reference (\[\]) if sql result is empty.
+
+            my $itr = $coteng->db('db_slave')->search_named(q[SELECT * FROM user WHERE id = :id], {id => 1}, 'Your::Model::Host');
+
+        If you give array reference to value, that is expanded to "(?,?,?,?)" in SQL.
+        It's useful in case use IN statement.
+
+            # SELECT * FROM user WHERE id IN (?,?,?);
+            # bind [1,2,3]
+            my $rows = $coteng->db('db_slave')->search_named(q[SELECT * FROM user WHERE id IN :ids], {ids => [1, 2, 3]}, 'Your::Model::Host');
+
+    - `$rows = $coteng->search_by_sql($sql, [\@bind_values], [$class])`
+
+        Execute your SQL.
+        Returns empty array reference (\[\]) if sql result is empty.
+
+            my $rows = $coteng->db('db_slave')->search_by_sql(q{
+                SELECT
+                    id, name
+                FROM
+                    host
+                WHERE
+                    id = ?
+            }, [ 1 ]);
+
+    - `$count = $coteng->count($table, [$table[, $column[, $where[, $opt]]])`
+
+        Execute count SQL.
+        Returns record counts.
+
+            my $count = $coteng->count(host, '*', {
+                status => 'working',
+            });
+
+    - `$sth = $coteng->execute($sql, [\@bind_values|@bind_values])`
+
+        execute query and get statement handler.
+
+    - `$id = $coteng->last_insert_id()`
+
+        Returns last\_insert\_id.
+
+    - `$txn = $coteng->txn_scope()`
+
+        Returns DBIx::TransactionManager::ScopeGuard object
+
+            {
+                my $txn = $coteng->db('db_master')->txn_scope();
+                ...
+                $txn->commit;
             }
-        );
-        # Executes UPDATE user SET name = 'host001' WHERE id = 1
 
-- `$delete_row_count = $coteng->delete($table, \%delete_condition)`
+    # NOTE
 
-    Deletes the specified record(s) from `$table` and returns the number of rows deleted. You may optionally specify `%delete_condition` to create a conditional delete query.
+    - USING DBI CLASSES
 
-        my $rows_deleted = $coteng->db('db_master')->delete(host => {
-            id => 1
-        });
-        # Executes DELETE FROM host WHERE id = 1
+        default DBI CLASS is 'DBI'. You can change DBI CLASS via $Coteng::DBI\_CLASS.
 
-- `$row = $teng->single($table_name, \%search_condition, \%search_attr, [$class])`
+            local $Coteng::DBI_CLASS = 'Scope::Container::DBI';
+            my $coteng = Coteng->new({ connect_info => ... });
+            $coteng->dbh('db_master')->insert(...);
 
-    Returns (hash references or $class objects) or empty string ('') if sql result is empty
+    # SEE ALSO
 
-        my $row = $coteng->single(host => { id => 1 }, 'Your::Model::Host');
+    - [Teng](http://search.cpan.org/perldoc?Teng)
+    - [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny)
+    - [SQL::Maker](http://search.cpan.org/perldoc?SQL::Maker)
 
-        my $row = $coteng->single(host => { id => 1 }, { columns => [qw(id name)] });
+    # LICENSE
 
-- `$rows = $coteng->search($table_name, [\%search_condition, [\%search_attr]], [$class])`
+    Copyright (C) y\_uuki.
 
-    Returns array reference of (hash references or $class objects) or empty array reference (\[\]) if sql result is empty.
+    This library is free software; you can redistribute it and/or modify
+    it under the same terms as Perl itself.
 
-        my $rows = $coteng->db('db_slave')->search(host => {id => 1}, {order_by => 'id'}, 'Your::Model::Host');
+    # AUTHOR
 
-- `$row = $teng->single_named($sql, [\%bind_values], [$class])`
-
-    Gets one record from execute named query
-    Returns empty string ( '' ) if sql result is empty.
-
-        my $row = $coteng->dbh('db_slave')->single_named(q{SELECT id,name FROM host WHERE id = :id LIMIT 1}, {id => 1}, 'Your::Model::Host');
-
-- `$row = $coteng->single_by_sql($sql, [\@bind_values], $class)`
-
-    Gets one record from your SQL.
-    Returns empty string ('') if sql result is empty.
-
-        my $row = $coteng->single_by_sql(q{SELECT id,name FROM user WHERE id = ? LIMIT 1}, [1], 'user');
-
-- `$rows = $coteng->search_named($sql, [\%bind_values], [$class])`
-
-    Execute named query
-    Returns empty array reference (\[\]) if sql result is empty.
-
-        my $itr = $coteng->db('db_slave')->search_named(q[SELECT * FROM user WHERE id = :id], {id => 1}, 'Your::Model::Host');
-
-    If you give array reference to value, that is expanded to "(?,?,?,?)" in SQL.
-    It's useful in case use IN statement.
-
-        # SELECT * FROM user WHERE id IN (?,?,?);
-        # bind [1,2,3]
-        my $rows = $coteng->db('db_slave')->search_named(q[SELECT * FROM user WHERE id IN :ids], {ids => [1, 2, 3]}, 'Your::Model::Host');
-
-- `$rows = $coteng->search_by_sql($sql, [\@bind_values], [$class])`
-
-    Execute your SQL.
-    Returns empty array reference (\[\]) if sql result is empty.
-
-        my $rows = $coteng->db('db_slave')->search_by_sql(q{
-            SELECT
-                id, name
-            FROM
-                host
-            WHERE
-                id = ?
-        }, [ 1 ]);
-
-- `$count = $coteng->count($table, [$table[, $column[, $where[, $opt]]])`
-
-    Execute count SQL.
-    Returns record counts.
-
-        my $count = $coteng->dbh(host, '*', {
-            status => 'working',
-        });
-
-- `$sth = $coteng->execute($sql, [\@bind_values|@bind_values])`
-
-    execute query and get statement handler.
-
-- `$id = $coteng->last_insert_id()`
-
-    Returns last\_insert\_id.
-
-- `$txn = $coteng->txn_scope()`
-
-    Returns DBIx::TransactionManager::ScopeGuard object
-
-        {
-            my $txn = $coteng->db('db_master')->txn_scope();
-            ...
-            $txn->commit;
-        }
-
-# NOTE
-
-- USING DBI CLASSES
-
-    default DBI CLASS is 'DBI'. You can change DBI CLASS via $Coteng::DBI\_CLASS.
-
-        local $Coteng::DBI_CLASS = 'Scope::Container::DBI';
-        my $coteng = Coteng->new({ connect_info => ... });
-        $coteng->dbh('db_master')->insert(...);
-
-# SEE ALSO
-
-- [Teng](http://search.cpan.org/perldoc?Teng)
-- [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny)
-- [SQL::Maker](http://search.cpan.org/perldoc?SQL::Maker)
-
-# LICENSE
-
-Copyright (C) y\_uuki.
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-# AUTHOR
-
-y\_uuki <yuki.tsubo@gmail.com>
+    y\_uuki <yuki.tsubo@gmail.com>

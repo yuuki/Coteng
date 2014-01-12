@@ -2,6 +2,10 @@ Revision history for Perl extension Coteng
 
 {{$NEXT}}
 
+0.09 2014-01-12T03:03:24Z
+
+    - Don't cache dbh object because DBI cannot reconnect when db connection is killed
+
 0.08 2014-01-03T19:10:41Z
 
     - Fix missing load SQL::NamedPlaceholder
