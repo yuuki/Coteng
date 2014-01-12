@@ -55,10 +55,10 @@ subtest db => sub {
     });
 
     isa_ok $coteng->db('db_master'), 'Coteng';
-    is $coteng->current_dbh, $coteng->{dbh}{db_master};
+    is $coteng->current_dbname, 'db_master';
 
     isa_ok $coteng->db('db_slave'),  'Coteng';
-    is $coteng->current_dbh, $coteng->{dbh}{db_slave};
+    is $coteng->current_dbname, 'db_slave';
 
 };
 
@@ -90,35 +90,19 @@ subtest dbh => sub {
         isa_ok $coteng->dbh('db_slave'),  'Coteng::DBI::db';
     };
 
-    subtest 'dbh' => sub {
-        my $dbh1 = DBIx::Sunny->connect('dbi:SQLite::memory:');
-        my $dbh2 = DBIx::Sunny->connect('dbi:SQLite::memory:');
-
-        my $coteng = Coteng->new({
-            dbh => {
-                db_master   => $dbh1,
-                db_slave    => $dbh2,
-            },
-        });
-
-        is $coteng->dbh('db_master'), $dbh1;
-        is $coteng->dbh('db_slave'),  $dbh2;
-    };
-
 };
-
-
-my $dbh = setup_dbh();
-create_table($dbh);
 
 my $coteng = Coteng->new({
     connect_info => {
         db_master => {
-            dsn => 'dbi:SQLite::memory:',
+            dsn => "dbi:SQLite::memory:",
         },
     },
 });
-$coteng->current_dbh($dbh);
+$coteng->current_dbname('db_master');
+my $dbh = $coteng->dbh;
+create_table($dbh);
+local *Coteng::dbh = sub { $dbh };
 
 subtest single => sub {
     my $id = insert_mock($dbh, name => "mock1");
@@ -413,7 +397,7 @@ subtest execute => sub {
     my $found_row = $coteng->single(mock => {
         name => 'mock11',
     });
-    is $found_row->{id}, $coteng->current_dbh->last_insert_id;
+    is $found_row->{id}, $coteng->last_insert_id;
 };
 
 subtest txn_scope => sub {
