@@ -49,6 +49,8 @@
             "Module::Load" : "0",
             "SQL::Maker" : "1.12",
             "SQL::NamedPlaceholder" : "0.03",
+            "Scope::Container" : "0",
+            "Scope::Container::DBI" : "0",
             "parent" : "0",
             "perl" : "5.008005"
          }
@@ -73,6 +75,6 @@
          "web" : "https://github.com/y-uuki/Coteng"
       }
    },
-   "version" : "0.09",
+   "version" : "0.10",
    "x_authority" : "cpan:YUUKI"
 }
