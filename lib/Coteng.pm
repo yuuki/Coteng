@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 our $VERSION = "0.09";
-our $DBI_CLASS = 'DBI';
+our $DBI_CLASS = 'Coteng::DBI';
 
 use Carp ();
 use Module::Load ();
@@ -62,7 +62,7 @@ sub dbh {
         $self->{_dbh_container_dummy} = start_scope_container();
     }
 
-    $attr->{RootClass} ||= 'Coteng::DBI';
+    $attr->{RootClass} ||= $DBI_CLASS;
     my $dbh = Scope::Container::DBI->connect($dsn, $user, $passwd, $attr);
     $dbh;
 }
