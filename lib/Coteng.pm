@@ -5,9 +5,11 @@ use warnings;
 
 our $VERSION = "0.09";
 our $DBI_CLASS = 'DBI';
+my $dbh_container;
 
 use Carp ();
 use Module::Load ();
+use Scope::Container;
 use SQL::NamedPlaceholder ();
 use Class::Accessor::Lite::Lazy (
     rw => [qw(
@@ -55,8 +57,12 @@ sub dbh {
 
     load_if_class_not_loaded($DBI_CLASS);
 
+    unless (in_scope_container) {
+        $dbh_container = start_scope_container();
+    }
+
     $attr->{RootClass} ||= 'Coteng::DBI';
-    my $dbh = $DBI_CLASS->connect($dsn, $user, $passwd, $attr);
+    my $dbh = Scope::Container::DBI->connect($dsn, $user, $passwd, $attr);
     $dbh;
 }
 
@@ -102,7 +108,7 @@ sub search_named {
 
 sub execute {
     my $self = shift;
-    my $db = $self->dbh->query($self->_expand_args(@_));
+    $self->dbh->query($self->_expand_args(@_));
 }
 
 sub single {
