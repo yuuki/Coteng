@@ -654,9 +654,10 @@ Returns DBIx::TransactionManager::ScopeGuard object
 
 =item USING DBI CLASSES
 
-default DBI CLASS is 'DBI'. You can change DBI CLASS via $Coteng::DBI_CLASS.
+default DBI CLASS is 'Coteng::DBI' (Coteng::DBI's parent is DBIx::Sunny). You can change DBI CLASS via $Coteng::DBI_CLASS.
+'Your::DBI' class should be followed by DBIx::Sunny interface.
 
-    local $Coteng::DBI_CLASS = 'Scope::Container::DBI';
+    local $Coteng::DBI_CLASS = 'Your::DBI';
     my $coteng = Coteng->new({ connect_info => ... });
     $coteng->dbh('db_master')->insert(...);
 
