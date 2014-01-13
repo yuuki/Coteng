@@ -310,6 +310,18 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       Fcntl 0
       POSIX 0
+  Log-Minimal-0.17
+    pathname: K/KA/KAZEBURO/Log-Minimal-0.17.tar.gz
+    provides:
+      Log::Minimal 0.17
+    requirements:
+      CPAN::Meta 0
+      CPAN::Meta::Prereqs 0
+      Data::Dumper 0
+      ExtUtils::CBuilder 0
+      Module::Build 0.38
+      Scalar::Util 0
+      Term::ANSIColor 0
   Module-Build-0.4203
     pathname: L/LE/LEONT/Module-Build-0.4203.tar.gz
     provides:
@@ -458,6 +470,31 @@ DISTRIBUTIONS
       Module::Build 0.38
       Scalar::Util 0
       Test::Name::FromLine 0
+  Scope-Container-0.04
+    pathname: K/KA/KAZEBURO/Scope-Container-0.04.tar.gz
+    provides:
+      Scope::Container 0.04
+    requirements:
+      ExtUtils::MakeMaker 6.42
+      Test::More 0.88
+      perl 5.008001
+  Scope-Container-DBI-0.09
+    pathname: K/KA/KAZEBURO/Scope-Container-DBI-0.09.tar.gz
+    provides:
+      Scope::Container::DBI 0.09
+    requirements:
+      DBD::SQLite 0
+      DBI 1.615
+      Data::Dumper 0
+      ExtUtils::MakeMaker 6.36
+      File::Temp 0
+      List::Util 0
+      Log::Minimal 0
+      Module::Load 0
+      Scope::Container 0.04
+      Test::More 0
+      Test::SharedFork 0
+      Try::Tiny 0.11
   Test-Differences-0.61
     pathname: O/OV/OVID/Test-Differences-0.61.tar.gz
     provides:
