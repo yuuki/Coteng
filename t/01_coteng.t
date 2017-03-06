@@ -107,10 +107,18 @@ local *Coteng::dbh = sub { $dbh };
 subtest single => sub {
     my $id = insert_mock($dbh, name => "mock1");
 
-    subtest 'without class' => sub {
+    subtest 'without class, use hashref' => sub {
         my $row = $coteng->single(mock => {
             id => $id,
         });
+        isa_ok $row, "HASH";
+        is $row->{name}, "mock1";
+    };
+
+    subtest 'without class, use SQL::Maker::Condition' => sub {
+        my $row = $coteng->single(mock =>
+            SQL::Maker::Condition->new->add(id => $id)
+        );
         isa_ok $row, "HASH";
         is $row->{name}, "mock1";
     };
@@ -127,10 +135,19 @@ subtest single => sub {
 subtest search => sub {
     my $id = insert_mock($dbh, name => "mock2");
 
-    subtest 'without class' => sub {
+    subtest 'without class, use hashref' => sub {
         my $rows = $coteng->search(mock => {
             name => "mock2",
         });
+        isa_ok $rows, "ARRAY";
+        is scalar(@$rows), 1;
+        isa_ok $rows->[0], "HASH";
+    };
+
+    subtest 'without class, use SQL::Maker::Condition' => sub {
+        my $rows = $coteng->search(mock =>
+            SQL::Maker::Condition->new->add(name => "mock2")
+        );
         isa_ok $rows, "ARRAY";
         is scalar(@$rows), 1;
         isa_ok $rows->[0], "HASH";
