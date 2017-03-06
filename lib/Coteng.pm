@@ -112,6 +112,14 @@ sub execute {
     $self->dbh->query($self->_expand_args(@_));
 }
 
+sub _validate_where {
+    my ($self, $where) = @_;
+    if (ref($where) ne "HASH" && ref($where) ne "ARRAY"
+        && ref($where) ne "SQL::Maker::Condition" && ref($where) ne "SQL::QueryMaker") {
+        Carp::croak "'where' required to be HASH or ARRAY or SQL::Maker::Condition or SQL::QueryMaker";
+    }
+}
+
 sub single {
     my ($self, $table, $where, $opt) = @_;
     my $class = do {
@@ -122,9 +130,7 @@ sub single {
         $opt = {};
     }
 
-    if (ref($where) ne "HASH" && ref($where) ne "ARRAY") {
-        Carp::croak "'where' required to be HASH or ARRAY";
-    }
+    $self->_validate_where($where);
 
     $opt->{limit} = 1;
 
@@ -148,9 +154,7 @@ sub search {
         $opt = {};
     }
 
-    if (ref($where) ne "HASH" && ref($where) ne "ARRAY") {
-        Carp::croak "'where' required to be HASH or ARRAY";
-    }
+    $self->_validate_where($where);
 
     my ($sql, @binds) = $self->sql_builder->select(
         $table,
