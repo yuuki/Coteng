@@ -190,7 +190,7 @@ sub insert {
     }
 
     if (ref($args) ne "HASH" && ref($args) ne "ARRAY") {
-        Carp::croak "'where' required to be HASH or ARRAY";
+        Carp::croak "'args' required to be HASH or ARRAY";
     }
 
     $opt->{primary_key} ||= "id";
