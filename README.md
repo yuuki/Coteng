@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/y-uuki/Coteng.png?branch=master)](https://travis-ci.org/y-uuki/Coteng) [![Coverage Status](https://coveralls.io/repos/y-uuki/Coteng/badge.png?branch=master)](https://coveralls.io/r/y-uuki/Coteng?branch=master)
+[![Build Status](https://travis-ci.org/yuuki/Coteng.svg?branch=master)](https://travis-ci.org/yuuki/Coteng) [![Coverage Status](https://img.shields.io/coveralls/yuuki/Coteng/master.svg?style=flat)](https://coveralls.io/r/yuuki/Coteng?branch=master)
 # NAME
 
 Coteng - Lightweight Teng
@@ -52,7 +52,6 @@ Coteng - Lightweight Teng
     });
 
 
-
     my $inserted_host = $coteng->db('db_master')->insert(host => {
         name    => 'host001',
         ipv4    => '10.0.0.1',
@@ -102,7 +101,6 @@ Coteng - Lightweight Teng
     ], [ "working" ], "Your::Model::Host");
 
 
-
     package Your::Model::Host;
 
     use Class::Accessor::Lite(
@@ -115,15 +113,13 @@ Coteng - Lightweight Teng
         new => 1,
     );
 
-
-
 # DESCRIPTION
 
-Coteng is a lightweight [Teng](http://search.cpan.org/perldoc?Teng), just as very simple DBI wrapper.
-Teng is a simple and good designed ORMapper, but it has a little complicated functions such as the row class, iterator class, the schema definition class ([Teng::Row](http://search.cpan.org/perldoc?Teng::Row), [Teng::Iterator](http://search.cpan.org/perldoc?Teng::Iterator) and [Teng::Schema](http://search.cpan.org/perldoc?Teng::Schema)).
+Coteng is a lightweight [Teng](https://metacpan.org/pod/Teng), just as very simple DBI wrapper.
+Teng is a simple and good designed ORMapper, but it has a little complicated functions such as the row class, iterator class, the schema definition class ([Teng::Row](https://metacpan.org/pod/Teng::Row), [Teng::Iterator](https://metacpan.org/pod/Teng::Iterator) and [Teng::Schema](https://metacpan.org/pod/Teng::Schema)).
 Coteng doesn't have such functions and only has very similar Teng SQL interface.
 
-Coteng itself has no transaction and last\_insert\_id implementation, but has thir interface thanks to [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny).
+Coteng itself has no transaction and last\_insert\_id implementation, but has thir interface thanks to [DBIx::Sunny](https://metacpan.org/pod/DBIx::Sunny).
 (Coteng uses DBIx::Sunny as a base DB handler.)
 
 # METHODS
@@ -331,30 +327,102 @@ Coteng provides a number of methods to all your classes,
                 $txn->commit;
             }
 
-    # NOTE
+# NOTE
 
-    - USING DBI CLASSES
+- USING DBI CLASSES
 
-        default DBI CLASS is 'Coteng::DBI' (Coteng::DBI's parent is DBIx::Sunny). You can change DBI CLASS via $Coteng::DBI\_CLASS.
-        'Your::DBI' class should be followed by DBIx::Sunny interface.
+    default DBI CLASS is 'Coteng::DBI' (Coteng::DBI's parent is DBIx::Sunny). You can change DBI CLASS via $Coteng::DBI\_CLASS.
+    'Your::DBI' class should be followed by DBIx::Sunny interface.
 
-            local $Coteng::DBI_CLASS = 'Your::DBI';
-            my $coteng = Coteng->new({ connect_info => ... });
-            $coteng->dbh('db_master')->insert(...);
+        local $Coteng::DBI_CLASS = 'Your::DBI';
+        my $coteng = Coteng->new({ connect_info => ... });
+        $coteng->dbh('db_master')->insert(...);
 
-    # SEE ALSO
+# SEE ALSO
 
-    - [Teng](http://search.cpan.org/perldoc?Teng)
-    - [DBIx::Sunny](http://search.cpan.org/perldoc?DBIx::Sunny)
-    - [SQL::Maker](http://search.cpan.org/perldoc?SQL::Maker)
+- [Teng](https://metacpan.org/pod/Teng)
+- [DBIx::Sunny](https://metacpan.org/pod/DBIx::Sunny)
+- [SQL::Maker](https://metacpan.org/pod/SQL::Maker)
 
-    # LICENSE
+# LICENSE
 
-    Copyright (C) y\_uuki.
+Copyright (C) y\_uuki.
 
-    This library is free software; you can redistribute it and/or modify
-    it under the same terms as Perl itself.
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
-    # AUTHOR
+# AUTHOR
 
-    y\_uuki <yuki.tsubo@gmail.com>
+y\_uuki <yuki.tsubo@gmail.com>
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 492:
+
+    Expected '=item \*'
+
+- Around line 499:
+
+    Expected '=item \*'
+
+- Around line 516:
+
+    Expected '=item \*'
+
+- Around line 522:
+
+    Expected '=item \*'
+
+- Around line 547:
+
+    Expected '=item \*'
+
+- Around line 561:
+
+    Expected '=item \*'
+
+- Around line 570:
+
+    Expected '=item \*'
+
+- Around line 578:
+
+    Expected '=item \*'
+
+- Around line 584:
+
+    Expected '=item \*'
+
+- Around line 591:
+
+    Expected '=item \*'
+
+- Around line 598:
+
+    Expected '=item \*'
+
+- Around line 612:
+
+    Expected '=item \*'
+
+- Around line 626:
+
+    Expected '=item \*'
+
+- Around line 635:
+
+    Expected '=item \*'
+
+- Around line 639:
+
+    Expected '=item \*'
+
+- Around line 643:
+
+    Expected '=item \*'
+
+- Around line 655:
+
+    You forgot a '=back' before '=head1'

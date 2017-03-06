@@ -2,6 +2,10 @@ Revision history for Perl extension Coteng
 
 {{$NEXT}}
 
+0.11 2017-03-06T09:04:30Z
+
+    - Allow SQL::Maker::Condition and SQL::QueryMaker #16 by nonylene
+
 0.10 2014-01-13T06:36:08Z
 
     - Reintroduce safe cache of dbh object by Scope::Container::DBI
