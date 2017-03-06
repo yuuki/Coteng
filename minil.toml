@@ -2,5 +2,6 @@ name = "Coteng"
 authority = "cpan:YUUKI"
 badges = ['travis', 'coveralls']
 
-[tap_harness_args]
-jobs=3
+module_maker="ModuleBuildTiny"
+[Metadata]
+x_static_install = 1
